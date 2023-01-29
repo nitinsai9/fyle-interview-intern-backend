@@ -1,14 +1,20 @@
-from flask import jsonify
+from flask import jsonify,abort
 from marshmallow.exceptions import ValidationError
 from core import app
-from core.apis.assignments import student_assignments_resources
+from core.apis.assignments import student_assignments_resources , teacher_assignment
+
 from core.libs import helpers
 from core.libs.exceptions import FyleError
 from werkzeug.exceptions import HTTPException
 
 from sqlalchemy.exc import IntegrityError
+from core import db
+
+from core.models.assignments import Assignment 
+
 
 app.register_blueprint(student_assignments_resources, url_prefix='/student')
+app.register_blueprint(teacher_assignment , url_prefix = '/teacher')
 
 
 @app.route('/')
@@ -19,6 +25,18 @@ def ready():
     })
 
     return response
+''' This is for rolling back the change made during testing is real case we can remove this . Just for the test case to run I have used this '''
+
+@app.route('/rollback' , methods=['GET'] , strict_slashes=False)
+def clearup():
+    Assignment.rollback_assignment_2(2)
+    db.session.commit()
+    response =  jsonify({ 'Done' : 'Updated'})
+    if response is None:
+        abort(404, description="Resource not found")
+    
+    return response 
+
 
 
 @app.errorhandler(Exception)

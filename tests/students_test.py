@@ -1,3 +1,4 @@
+
 def test_get_assignments_student_1(client, h_student_1):
     response = client.get(
         '/student/assignments',
@@ -49,7 +50,8 @@ def test_submit_assignment_student_1(client, h_student_1):
         json={
             'id': 2,
             'teacher_id': 2
-        })
+        }
+        )
 
     assert response.status_code == 200
 
@@ -57,7 +59,6 @@ def test_submit_assignment_student_1(client, h_student_1):
     assert data['student_id'] == 1
     assert data['state'] == 'SUBMITTED'
     assert data['teacher_id'] == 2
-
 
 def test_assingment_resubmitt_error(client, h_student_1):
     response = client.post(
@@ -71,3 +72,18 @@ def test_assingment_resubmitt_error(client, h_student_1):
     assert response.status_code == 400
     assert error_response['error'] == 'FyleError'
     assert error_response["message"] == 'only a draft assignment can be submitted'
+
+
+
+''' This test case is to rollback back the changes done during the test case for assignment id 2 '''
+
+def test_rollback(client):
+    response = client.get('/rollback')
+    assert response.status_code == 200
+
+
+
+
+
+    
+    

@@ -36,3 +36,18 @@ class AssignmentSubmitSchema(Schema):
     def initiate_class(self, data_dict, many, partial):
         # pylint: disable=unused-argument,no-self-use
         return GeneralObject(**data_dict)
+
+
+''' This is for conversion of  payload for teacher '''
+class teacher_payload(SQLAlchemyAutoSchema):
+    class Meta :
+        model = Assignment
+        unknown = EXCLUDE
+        
+    id = auto_field(required=False) 
+    grade = auto_field( allow_none=False)
+
+    @post_load
+    def initiate_class(self, data_dict, many, partial):
+        # pylint: disable=unused-argument,no-self-use
+        return Assignment(**data_dict)
